@@ -1,6 +1,24 @@
 <template>
 	<view class="mainContent">
 
+		<view class="TitleBar">
+			<text class="TitleBarText">
+				深浦SENPUM
+			</text>
+
+			<view class="buttonContainer">
+				<button class="BuTitleBar1">关于</button>
+				<button class="BuTitleBar2">设置</button>
+				<button class="BuTitleBar3">帮助</button>
+			</view>
+		</view>
+
+
+
+
+
+
+
 		<view class="OriginalData">
 			原始数据： {{ receivedMessage }}
 		</view>
@@ -22,14 +40,11 @@
 
 		</view>
 		<view class="controButton">
-			<button type="default" @click="stopMQTTserver">断开服务器</button>
-
+			<button class="connectMQTT" type="default" @click="stopMQTTserver">断开服务器</button>
+			<button class="breakMQTT" type="default" @click="reconnectMQTTserver">连接服务器</button>
 		</view>
 
-		<view class="reconnect">
-			<button type="default" @click="reconnectMQTTserver">连接服务器</button>
 
-		</view>
 	</view>
 
 
@@ -59,7 +74,13 @@
 
 			}
 		},
-		mounted() {},
+		mounted() {
+
+
+
+
+
+		},
 		methods: {
 			connect() {
 
@@ -122,11 +143,49 @@
 </script>
 
 
-<style>
+<style lang="scss">
 	.mainContent {
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		justify-content: flex-start;
+
+
+
+		.TitleBar {
+			width: 100%;
+			background-color: #00CED1;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 10px;
+		}
+
+		.TitleBarText {
+			font-size: 30px;
+		}
+
+		.buttonContainer {
+			display: flex;
+			align-items: center;
+		}
+
+		.BuTitleBar1,
+		.BuTitleBar2,
+		.BuTitleBar3 {
+			margin-right: 20px;
+			white-space: nowrap; /* 禁止换行 */
+			overflow: hidden; /* 隐藏超出部分 */
+			text-overflow: ellipsis; /* 超出部分显示省略号 */
+		}
+		.controButton{
+			display: flex;
+			flex-direction:column;
+			
+			.connectMQTT,.breakMQTT{
+				margin-left: 3px;
+			}
+		}
+		
+
+
+
+
 	}
 </style>
