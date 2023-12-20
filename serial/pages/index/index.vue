@@ -1,24 +1,29 @@
 <template>
 	<view class="mainContent">
 
-		<view class="TitleBar">
-			<text class="TitleBarText">
-				深浦SENPUM
-			</text>
 
-			<view class="buttonContainer">
-				<button class="BuTitleBar1">关于</button>
-				<button class="BuTitleBar2">设置</button>
-				<button class="BuTitleBar3">帮助</button>
-			</view>
+<!-- 标题显示 -->
+		<view class="TitleBar">
+			<text class="TitleBarText">深浦SENPUM</text>
+			<text class="TitleBarText_min">感知新技术 sensing new technology</text>
 		</view>
 
+			<view class="buttonContainer">
+				<view class="buttonContainer1">
+					<button class="BuTitleBar1" size="mini">关于</button>
+				</view>
+				<view class="buttonContainer2">
+					<button class="BuTitleBar2" size="mini">工具</button>
+				</view>
+				<view class="buttonContainer3">
+					<button class="BuTitleBar3" size="mini">设置</button>	
+				</view>			
+			</view>
 
 
 
 
-
-
+<!-- 数据显示 -->
 		<view class="OriginalData">
 			原始数据： {{ receivedMessage }}
 		</view>
@@ -45,8 +50,17 @@
 		</view>
 
 
-	</view>
 
+<!-- 		ucharts 使用 -->
+  <view>
+    <canvas canvas-id="ZvXOePeygEeiyvjDIdDUYPPfjaqrHYgh" id="ZvXOePeygEeiyvjDIdDUYPPfjaqrHYgh" class="charts" @touchend="tap"/>
+  </view>
+
+
+
+
+
+	</view>
 
 
 
@@ -65,22 +79,42 @@
 	} from '@/utils/mqtt.js';
 	var mqtt = require('mqtt/dist/mqtt.js')
 	var client
+	
+	
+	import uCharts from '@/uCharts/u-charts.js';
+var uChartsInstance = {};
+
+
+
+
 	export default {
 		data() {
 			return {
 				topic: 'home/seria', //要订阅的主题
 				receivedMessage: '', // 接收到的消息
-				receivedMessageSplit: '',
+				receivedMessageSplit:[],
+
+
+ 
+//ucharts use 
+      cWidth: 750,
+      cHeight: 500
+
+
 
 			}
 		},
 		mounted() {
 
-
-
-
-
 		},
+	  onReady() {
+    //这里的 750 对应 css .charts 的 width
+    this.cWidth = uni.upx2px(750);
+    //这里的 500 对应 css .charts 的 height
+    this.cHeight = uni.upx2px(500);
+    this.getServerData();
+	  },
+		
 		methods: {
 			connect() {
 
@@ -136,10 +170,76 @@
 					}
 					console.log('正在连接 MQTT 服务器');
 				}
-			}
-
-		}
-	}
+			},
+			
+			
+			
+			
+		//ucharts use
+				getServerData() {
+      //模拟从服务器获取数据时的延时
+      setTimeout(() => {
+        //模拟服务器返回数据，如果数据格式和标准格式不同，需自行按下面的格式拼接
+        let res = {
+            categories: ["2018","2019","2020","2021","2022","2023"],
+            series: [
+              {
+                name: "通道1",
+                lineType: "dash",
+                data: [35,8,25,37,4,20]
+              },
+              {
+                name: "通道2",
+                data: [70,40,65,100,44,68]
+              },
+              {
+                name: "通道3",
+                data: [100,80,95,150,112,132]
+              }
+            ]
+          };
+        this.drawCharts('ZvXOePeygEeiyvjDIdDUYPPfjaqrHYgh', res);
+      }, 500);
+		},
+    drawCharts(id,data){
+      const ctx = uni.createCanvasContext(id, this);
+      uChartsInstance[id] = new uCharts({
+        type: "line",
+        context: ctx,
+        width: this.cWidth,
+        height: this.cHeight,
+        categories: data.categories,
+        series: data.series,
+        animation: true,
+        background: "#FFFFFF",
+        color: ["#1890FF","#91CB74","#FAC858","#EE6666","#73C0DE","#3CA272","#FC8452","#9A60B4","#ea7ccc"],
+        padding: [15,10,0,15],
+        enableScroll: false,
+        legend: {},
+        xAxis: {
+          disableGrid: true
+        },
+        yAxis: {
+          gridType: "dash",
+          dashLength: 2
+        },
+        extra: {
+          line: {
+            type: "curve",
+            width: 2,
+            activeType: "hollow"
+          }
+        }
+      });
+    },
+	
+    tap(e){
+      uChartsInstance[e.target.id].touchLegend(e);
+      uChartsInstance[e.target.id].showToolTip(e);
+    }
+	
+   }
+}
 </script>
 
 
@@ -151,33 +251,31 @@
 		.TitleBar {
 			width: 100%;
 			background-color: #00CED1;
-			display: flex;
 			align-items: center;
-			justify-content: space-between;
-			padding: 10px;
-		}
+			padding: 20px;
+			.TitleBarText {
+				display: block;
+				font-size: 30px;
+			}
+			.TitleBarText_min{
 
-		.TitleBarText {
-			font-size: 30px;
+			}
 		}
 
 		.buttonContainer {
 			display: flex;
-			align-items: center;
-		}
-
-		.BuTitleBar1,
-		.BuTitleBar2,
-		.BuTitleBar3 {
-			margin-right: 20px;
-			white-space: nowrap; /* 禁止换行 */
-			overflow: hidden; /* 隐藏超出部分 */
-			text-overflow: ellipsis; /* 超出部分显示省略号 */
+			background-color: #00CED1;
+			padding: 10px;
+			justify-content:flex-end;
+					.BuTitleBar1,
+					.BuTitleBar2,
+					.BuTitleBar3 {
+					margin: 3px;
+				}			
 		}
 		.controButton{
 			display: flex;
 			flex-direction:column;
-			
 			.connectMQTT,.breakMQTT{
 				margin-left: 3px;
 			}
@@ -187,5 +285,20 @@
 
 
 
+  .charts{
+    width: 750rpx;
+    height: 500rpx;
+  }
+
+
+
+
+
+
+
+
+
 	}
+	
+	
 </style>
