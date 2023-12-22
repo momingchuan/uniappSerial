@@ -44,11 +44,28 @@
 			计数4： {{ receivedMessageSplit[3] }}
 
 		</view>
-		<view class="controButton">
-			<button class="connectMQTT" type="default" @click="stopMQTTserver">断开服务器</button>
-			<button class="breakMQTT" type="default" @click="reconnectMQTTserver">连接服务器</button>
+		<view class="controButton_father">
+			<view class="controButton_break">
+				<button class="breakMQTT" type="default" @click="stopMQTTserver">断开服务器</button>
+			</view>
+			<view class="controButton_conne">
+				<button class="connectMQTT" type="default" @click="reconnectMQTTserver">连接服务器</button>
+			</view>
+			
+			
 		</view>
 
+
+
+<view class="printText_father" >
+	
+	<text>数据打印区域:</text>
+	<view class="printText">
+		<textarea class="printText_txt" v-model="outPrintText"/></textarea>
+	</view>
+	
+	
+</view>
 
 
 <!-- 		ucharts 使用 -->
@@ -93,12 +110,14 @@ var uChartsInstance = {};
 				topic: 'home/seria', //要订阅的主题
 				receivedMessage: '', // 接收到的消息
 				receivedMessageSplit:[],
+//print text
+outPrintText:"",
 
-
- 
 //ucharts use 
       cWidth: 750,
-      cHeight: 500
+      cHeight: 500,
+
+
 
 
 
@@ -116,6 +135,10 @@ var uChartsInstance = {};
 	  },
 		
 		methods: {
+			
+
+			
+			
 			connect() {
 
 				MQTT_OPTIONS.clientId = v4()
@@ -147,6 +170,12 @@ var uChartsInstance = {};
 					//                console.log('接收推送信息：', message.toString())
 					that.receivedMessage = message.toString(); // 将接收到的消息存储到数据属性中
 					that.receivedMessageSplit = that.receivedMessage.split(',');
+			
+					//print out data 
+					that.outPrintText += that.receivedMessageSplit [0]+'\n';
+					that.outPrintText += that.receivedMessageSplit [1]+'\n';
+					that.outPrintText += that.receivedMessageSplit [2]+'\n';
+					that.outPrintText += that.receivedMessageSplit [3]+'\n';
 				})
 
 			},
@@ -238,6 +267,7 @@ var uChartsInstance = {};
       uChartsInstance[e.target.id].showToolTip(e);
     }
 	
+	
    }
 }
 </script>
@@ -273,18 +303,54 @@ var uChartsInstance = {};
 					margin: 3px;
 				}			
 		}
-		.controButton{
-			display: flex;
+		.controButton_father{
+			
+			
 			flex-direction:column;
-			.connectMQTT,.breakMQTT{
+			
+			.controButton_break{
+				padding-top: 5px;
+				display: flex;
 				margin-left: 3px;
+				.breakMQTT{
+					
+					margin-left: 3px;
+				}
 			}
+			.controButton_conne{
+				display: flex;
+				padding-top: 5px;
+				margin-left: 3px;
+				.connectMQTT{
+					
+					margin-left: 3px;
+				}
+				
+			}
+
 		}
 		
 
 
+.printText_father{
+	padding-top: 20px;
+	.printText{
+		
+		border: 2px solid #ff0000; /* 设置边框为1px粗细的红色边框 */
+		height: 200px;
+		.printText_txt{
+		 width: 100%; /* 设置宽度为300像素 */
+		 height: 200px; /* 设置高度为200像素 */
+		 overflow: auto; /* 或者使用 overflow: scroll; */
+		}
+
+	}	
+}
 
 
+
+
+//曲线图
   .charts{
     width: 750rpx;
     height: 500rpx;
