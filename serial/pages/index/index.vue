@@ -339,9 +339,17 @@
 
 
 <style lang="scss">
+	
+  @keyframes blinking {
+    0% { opacity: 1;  color: red; }
+    20% { opacity: 1;  color: blue; }
+	40% { opacity: 1;  color: green; }
+    60% { opacity: 1;  color: darkcyan; }
+	60% { opacity: 0;   }
+  } 
+
+	
 	.mainContent {
-
-
 
 		.TitleBar {
 			width: 100%;
@@ -354,7 +362,10 @@
 				font-size: 30px;
 			}
 
-			.TitleBarText_min {}
+			.TitleBarText_min {
+				animation: blinking 3s infinite;
+				
+			}
 		}
 
 		.buttonContainer {
